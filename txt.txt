@@ -1,0 +1,4 @@
+{
+  "email": "admin@sgle.sn",
+  "motDePasse": "Admin@123"
+}

@@ -1,0 +1,13 @@
+package sn.gtech.sgle.entity.enums;
+
+public enum TypeNotificationEnum {
+    ATTRIBUTION_LOGEMENT,
+    DEMANDE_APPROUVEE,
+    DEMANDE_REJETEE,
+    RAPPEL_PAIEMENT,
+    INCIDENT_RESOLU,
+    FIN_CONTRAT_PROCHE,
+    MAINTENANCE_PLANIFIEE,
+    MESSAGE_GESTIONNAIRE,
+    ALERTE_SYSTEME
+}
