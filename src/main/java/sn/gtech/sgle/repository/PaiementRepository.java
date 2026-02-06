@@ -21,6 +21,8 @@ public interface PaiementRepository extends JpaRepository<Paiement, UUID> {
     
     Optional<Paiement> findByNumeroPaiement(String numeroPaiement);
     
+    Boolean existsByNumeroPaiement(String numeroPaiement);
+    
     List<Paiement> findByAttributionId(UUID attributionId);
     
     Page<Paiement> findByAttributionId(UUID attributionId, Pageable pageable);

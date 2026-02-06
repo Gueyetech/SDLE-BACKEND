@@ -17,6 +17,8 @@ public interface AttributionRepository extends JpaRepository<Attribution, UUID> 
     
     Optional<Attribution> findByNumeroContrat(String numeroContrat);
     
+    Boolean existsByNumeroContrat(String numeroContrat);
+    
     List<Attribution> findByEtudiantId(UUID etudiantId);
     
     Page<Attribution> findByEtudiantId(UUID etudiantId, Pageable pageable);

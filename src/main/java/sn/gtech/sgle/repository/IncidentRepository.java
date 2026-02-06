@@ -16,6 +16,8 @@ public interface IncidentRepository extends JpaRepository<Incident, UUID> {
     
     Optional<Incident> findByNumeroTicket(String numeroTicket);
     
+    Boolean existsByNumeroTicket(String numeroTicket);
+    
     List<Incident> findByEtudiantId(UUID etudiantId);
     
     List<Incident> findByLogementId(UUID logementId);
