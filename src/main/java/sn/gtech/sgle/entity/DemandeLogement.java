@@ -31,7 +31,7 @@ public class DemandeLogement {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "etudiant_id", nullable = false)
-    private Etudiant etudiant;
+    private Utilisateur etudiant;
     
     @Enumerated(EnumType.STRING)
     private TypeLogementEnum typeLogementSouhaite;
@@ -61,7 +61,7 @@ public class DemandeLogement {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gestionnaire_id")
-    private GestionnaireLogements gestionnaire;
+    private Utilisateur gestionnaire;
     
     private String motifRejet;
     
@@ -87,17 +87,8 @@ public class DemandeLogement {
         // Logique de calcul de priorité basée sur différents critères
         int score = 0;
         
-        // Distance de l'université
-        // Situation sociale
-        // Niveau d'études
-        if (etudiant != null && etudiant.getNiveauEtudes() != null) {
-            switch (etudiant.getNiveauEtudes()) {
-                case DOCTORAT -> score += 5;
-                case MASTER_2, MASTER_1 -> score += 4;
-                case LICENCE_3 -> score += 3;
-                default -> score += 1;
-            }
-        }
+        // Score de base pour les demandes
+        score += 1;
         
         return score;
     }

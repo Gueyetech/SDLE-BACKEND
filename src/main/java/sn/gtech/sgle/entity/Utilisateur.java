@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import sn.gtech.sgle.entity.enums.RoleEnum;
 
 import java.time.LocalDateTime;
@@ -15,9 +14,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "utilisateurs")
-@Inheritance(strategy = InheritanceType.JOINED)
 @Data
-@SuperBuilder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Utilisateur {

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import sn.gtech.sgle.dto.*;
 import sn.gtech.sgle.entity.*;
 import sn.gtech.sgle.entity.enums.RoleEnum;
-import sn.gtech.sgle.entity.enums.StatutEtudiantEnum;
 import sn.gtech.sgle.exception.AuthException;
 import sn.gtech.sgle.repository.*;
 import sn.gtech.sgle.security.JwtTokenProvider;
@@ -22,15 +21,12 @@ import java.time.LocalDateTime;
 public class AuthService {
 
     private final UtilisateurRepository utilisateurRepository;
-    private final EtudiantRepository etudiantRepository;
-    private final GestionnaireRepository gestionnaireRepository;
-    private final AdministrateurRepository administrateurRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * Inscription d'un nouvel utilisateur (principalement étudiant)
+     * Inscription d'un nouvel utilisateur
      */
     @Transactional
     public ConnexionResponse inscrire(InscriptionRequest request) {
@@ -44,85 +40,24 @@ public class AuthService {
             throw new AuthException("Les mots de passe ne correspondent pas");
         }
 
-        Utilisateur utilisateur;
-
-        switch (request.getRole()) {
-            case ETUDIANT:
-                utilisateur = inscrireEtudiant(request);
-                break;
-            case GESTIONNAIRE:
-                utilisateur = inscrireGestionnaire(request);
-                break;
-            case ADMIN:
-                throw new AuthException("L'inscription en tant qu'administrateur n'est pas autorisée");
-            default:
-                utilisateur = inscrireEtudiant(request);
+        if (request.getRole() == RoleEnum.ADMIN) {
+            throw new AuthException("L'inscription en tant qu'administrateur n'est pas autorisée");
         }
+
+        Utilisateur utilisateur = Utilisateur.builder()
+                .email(request.getEmail())
+                .motDePasse(passwordEncoder.encode(request.getMotDePasse()))
+                .role(request.getRole() != null ? request.getRole() : RoleEnum.ETUDIANT)
+                .actif(true)
+                .dateCreation(LocalDateTime.now())
+                .build();
+
+        utilisateur = utilisateurRepository.save(utilisateur);
 
         String accessToken = jwtTokenProvider.generateAccessToken(utilisateur.getEmail());
         String refreshToken = jwtTokenProvider.generateRefreshToken(utilisateur.getEmail());
 
         return buildConnexionResponse(utilisateur, accessToken, refreshToken, "Inscription réussie");
-    }
-
-    /**
-     * Inscription d'un étudiant
-     */
-    private Etudiant inscrireEtudiant(InscriptionRequest request) {
-        // Vérification matricule unique si fourni
-        if (request.getMatricule() != null && etudiantRepository.existsByMatricule(request.getMatricule())) {
-            throw new AuthException("Ce matricule est déjà utilisé");
-        }
-
-        ContactUrgence contactUrgence = null;
-        if (request.getNomContactUrgence() != null) {
-            contactUrgence = ContactUrgence.builder()
-                    .nomContact(request.getNomContactUrgence())
-                    .prenomContact(request.getPrenomContactUrgence())
-                    .relation(request.getRelationContactUrgence())
-                    .telephoneContact(request.getTelephoneContactUrgence())
-                    .emailContact(request.getEmailContactUrgence())
-                    .build();
-        }
-
-        Etudiant etudiant = Etudiant.builder()
-                .email(request.getEmail())
-                .motDePasse(passwordEncoder.encode(request.getMotDePasse()))
-                .role(RoleEnum.ETUDIANT)
-                .actif(true)
-                .dateCreation(LocalDateTime.now())
-                .matricule(request.getMatricule())
-                .nom(request.getNom())
-                .prenom(request.getPrenom())
-                .dateNaissance(request.getDateNaissance())
-                .telephone(request.getTelephone())
-                .adresseOriginale(request.getAdresseOriginale())
-                .universite(request.getUniversite())
-                .niveauEtudes(request.getNiveauEtudes())
-                .anneeAcademique(request.getAnneeAcademique())
-                .contactUrgence(contactUrgence)
-                .statut(StatutEtudiantEnum.EN_ATTENTE_VALIDATION)
-                .dateInscription(LocalDateTime.now())
-                .build();
-
-        return etudiantRepository.save(etudiant);
-    }
-
-    /**
-     * Inscription d'un gestionnaire (réservé aux admins)
-     */
-    private GestionnaireLogements inscrireGestionnaire(InscriptionRequest request) {
-        GestionnaireLogements gestionnaire = GestionnaireLogements.builder()
-                .email(request.getEmail())
-                .motDePasse(passwordEncoder.encode(request.getMotDePasse()))
-                .role(RoleEnum.GESTIONNAIRE)
-                .actif(true)
-                .dateCreation(LocalDateTime.now())
-                .telephone(request.getTelephone())
-                .departement(request.getDepartement())
-                .build();
-
-        return gestionnaireRepository.save(gestionnaire);
     }
 
     /**
@@ -213,7 +148,7 @@ public class AuthService {
      */
     private ConnexionResponse buildConnexionResponse(Utilisateur utilisateur, String accessToken, 
                                                       String refreshToken, String message) {
-        ConnexionResponse.ConnexionResponseBuilder builder = ConnexionResponse.builder()
+        return ConnexionResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
@@ -221,55 +156,22 @@ public class AuthService {
                 .utilisateurId(utilisateur.getId())
                 .email(utilisateur.getEmail())
                 .role(utilisateur.getRole())
-                .message(message);
-
-        // Ajout des informations spécifiques selon le type
-        if (utilisateur instanceof Etudiant etudiant) {
-            builder.typeUtilisateur("ETUDIANT")
-                    .nom(etudiant.getNom())
-                    .prenom(etudiant.getPrenom())
-                    .matricule(etudiant.getMatricule());
-        } else if (utilisateur instanceof GestionnaireLogements gestionnaire) {
-            builder.typeUtilisateur("GESTIONNAIRE")
-                    .departement(gestionnaire.getDepartement());
-        } else if (utilisateur instanceof Administrateur) {
-            builder.typeUtilisateur("ADMINISTRATEUR");
-        } else {
-            builder.typeUtilisateur("UTILISATEUR");
-        }
-
-        return builder.build();
+                .message(message)
+                .typeUtilisateur(utilisateur.getRole().name())
+                .build();
     }
 
     /**
      * Conversion en DTO
      */
     private UtilisateurDto toUtilisateurDto(Utilisateur utilisateur) {
-        UtilisateurDto.UtilisateurDtoBuilder builder = UtilisateurDto.builder()
+        return UtilisateurDto.builder()
                 .id(utilisateur.getId())
                 .email(utilisateur.getEmail())
                 .role(utilisateur.getRole())
                 .actif(utilisateur.getActif())
                 .dateCreation(utilisateur.getDateCreation())
-                .derniereConnexion(utilisateur.getDerniereConnexion());
-
-        if (utilisateur instanceof Etudiant etudiant) {
-            builder.matricule(etudiant.getMatricule())
-                    .nom(etudiant.getNom())
-                    .prenom(etudiant.getPrenom())
-                    .dateNaissance(etudiant.getDateNaissance())
-                    .telephone(etudiant.getTelephone())
-                    .adresseOriginale(etudiant.getAdresseOriginale())
-                    .universite(etudiant.getUniversite())
-                    .niveauEtudes(etudiant.getNiveauEtudes())
-                    .anneeAcademique(etudiant.getAnneeAcademique())
-                    .photoIdentite(etudiant.getPhotoIdentite())
-                    .statutEtudiant(etudiant.getStatut());
-        } else if (utilisateur instanceof GestionnaireLogements gestionnaire) {
-            builder.telephone(gestionnaire.getTelephone())
-                    .departement(gestionnaire.getDepartement());
-        }
-
-        return builder.build();
+                .derniereConnexion(utilisateur.getDerniereConnexion())
+                .build();
     }
 }

@@ -1,5 +1,7 @@
 package sn.gtech.sgle.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import sn.gtech.sgle.entity.Maintenance;
@@ -15,6 +17,8 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, UUID> 
     
     List<Maintenance> findByLogementId(UUID logementId);
     
+    Page<Maintenance> findByLogementId(UUID logementId, Pageable pageable);
+    
     List<Maintenance> findByStatut(StatutMaintenanceEnum statut);
     
     List<Maintenance> findByType(TypeMaintenanceEnum type);
@@ -24,4 +28,7 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, UUID> 
     List<Maintenance> findByTechnicien(String technicien);
     
     List<Maintenance> findByLogementIdAndStatut(UUID logementId, StatutMaintenanceEnum statut);
+    
+    // Méthodes de comptage
+    long countByStatut(StatutMaintenanceEnum statut);
 }

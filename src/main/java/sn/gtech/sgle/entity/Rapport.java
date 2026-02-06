@@ -47,7 +47,7 @@ public class Rapport {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genere_par_id")
-    private Administrateur generePar;
+    private Utilisateur generePar;
     
     @PrePersist
     public void prePersist() {

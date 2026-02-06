@@ -1,5 +1,7 @@
 package sn.gtech.sgle.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import sn.gtech.sgle.entity.Attribution;
@@ -17,9 +19,15 @@ public interface AttributionRepository extends JpaRepository<Attribution, UUID> 
     
     List<Attribution> findByEtudiantId(UUID etudiantId);
     
+    Page<Attribution> findByEtudiantId(UUID etudiantId, Pageable pageable);
+    
     List<Attribution> findByLogementId(UUID logementId);
     
+    Page<Attribution> findByLogementId(UUID logementId, Pageable pageable);
+    
     List<Attribution> findByStatut(StatutAttributionEnum statut);
+    
+    Page<Attribution> findByStatut(StatutAttributionEnum statut, Pageable pageable);
     
     List<Attribution> findByGestionnaireId(UUID gestionnaireId);
     
@@ -31,5 +39,14 @@ public interface AttributionRepository extends JpaRepository<Attribution, UUID> 
     
     List<Attribution> findByDateFinBetween(LocalDate dateDebut, LocalDate dateFin);
     
+    List<Attribution> findByStatutAndDateFinBetween(StatutAttributionEnum statut, LocalDate dateDebut, LocalDate dateFin);
+    
     Optional<Attribution> findByEtudiantIdAndStatutAndLogementId(UUID etudiantId, StatutAttributionEnum statut, UUID logementId);
+    
+    // Méthodes de comptage
+    long countByStatut(StatutAttributionEnum statut);
+    
+    long countByStatutAndDateFinBetween(StatutAttributionEnum statut, LocalDate dateDebut, LocalDate dateFin);
+    
+    boolean existsByEtudiantIdAndStatut(UUID etudiantId, StatutAttributionEnum statut);
 }

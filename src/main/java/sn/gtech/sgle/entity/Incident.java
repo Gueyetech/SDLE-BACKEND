@@ -31,7 +31,7 @@ public class Incident {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "etudiant_id", nullable = false)
-    private Etudiant etudiant;
+    private Utilisateur etudiant;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "logement_id", nullable = false)
@@ -65,7 +65,7 @@ public class Incident {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gestionnaire_id")
-    private GestionnaireLogements gestionnaire;
+    private Utilisateur gestionnaire;
     
     private String technicien;
     

@@ -31,4 +31,6 @@ public interface IncidentRepository extends JpaRepository<Incident, UUID> {
     List<Incident> findByStatutAndUrgence(StatutIncidentEnum statut, UrgenceEnum urgence);
     
     Long countByStatut(StatutIncidentEnum statut);
+    
+    long countByUrgence(UrgenceEnum urgence);
 }

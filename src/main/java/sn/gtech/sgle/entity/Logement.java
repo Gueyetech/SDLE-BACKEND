@@ -83,7 +83,7 @@ public class Logement {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gestionnaire_id")
-    private GestionnaireLogements gestionnaire;
+    private Utilisateur gestionnaire;
     
     @OneToMany(mappedBy = "logement", cascade = CascadeType.ALL)
     @Builder.Default
