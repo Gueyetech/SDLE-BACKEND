@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sn.gtech.sgle.entity.Attribution;
 import sn.gtech.sgle.entity.enums.StatutAttributionEnum;
+import sn.gtech.sgle.entity.enums.StatutPaiementEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -139,12 +140,12 @@ public class AttributionResponseDto {
             builder.nombrePaiements(attribution.getPaiements().size());
             
             long retards = attribution.getPaiements().stream()
-                    .filter(p -> p.getStatut() == sn.gtech.sgle.entity.enums.StatutPaiementEnum.EN_RETARD)
+                    .filter(p -> p.getStatut() == StatutPaiementEnum.EN_RETARD)
                     .count();
             builder.paiementsEnRetard((int) retards);
             
             BigDecimal totalPaye = attribution.getPaiements().stream()
-                    .filter(p -> p.getStatut() == sn.gtech.sgle.entity.enums.StatutPaiementEnum.PAYE)
+                    .filter(p -> p.getStatut() == StatutPaiementEnum.PAYE)
                     .map(p -> p.getMontant())
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             builder.totalPaye(totalPaye);

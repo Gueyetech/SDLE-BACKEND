@@ -18,6 +18,12 @@ import java.util.List;
 @Tag(name = "Énumérations", description = "Récupération des valeurs des énumérations utilisées dans l'application")
 public class TypeEnumController {
 
+    @GetMapping("/canal")
+    @Operation(summary = "Liste des canaux de communication")
+    public List<CanalEnum> canal() {
+        return Arrays.asList(CanalEnum.values());
+    }
+
     @GetMapping("/categorie-equipement")
     @Operation(summary = "Liste des catégories d'équipement")
     public List<CategorieEquipementEnum> categorieEquipement() {
@@ -70,6 +76,12 @@ public class TypeEnumController {
     @Operation(summary = "Liste des statuts de demande")
     public List<StatutDemandeEnum> statutDemande() {
         return Arrays.asList(StatutDemandeEnum.values());
+    }
+
+    @GetMapping("/statut-etudiant")
+    @Operation(summary = "Liste des statuts d'étudiant")
+    public List<StatutEtudiantEnum> statutEtudiant() {
+        return Arrays.asList(StatutEtudiantEnum.values());
     }
 
     @GetMapping("/statut-incident")
@@ -136,35 +148,5 @@ public class TypeEnumController {
     @Operation(summary = "Liste des niveaux d'urgence")
     public List<UrgenceEnum> urgence() {
         return Arrays.asList(UrgenceEnum.values());
-    }
-
-    @GetMapping("/all")
-    @Operation(summary = "Toutes les énumérations")
-    public AllEnums getAllEnums() {
-        return new AllEnums();
-    }
-
-    // Classe interne pour retourner toutes les énumérations
-    public static class AllEnums {
-        public List<CategorieEquipementEnum> categorieEquipement = Arrays.asList(CategorieEquipementEnum.values());
-        public List<FormatEnum> format = Arrays.asList(FormatEnum.values());
-        public List<FormatRapportEnum> formatRapport = Arrays.asList(FormatRapportEnum.values());
-        public List<ModePaiementEnum> modePaiement = Arrays.asList(ModePaiementEnum.values());
-        public List<NiveauEtudesEnum> niveauEtudes = Arrays.asList(NiveauEtudesEnum.values());
-        public List<PrioriteEnum> priorite = Arrays.asList(PrioriteEnum.values());
-        public List<RoleEnum> role = Arrays.asList(RoleEnum.values());
-        public List<StatutAttributionEnum> statutAttribution = Arrays.asList(StatutAttributionEnum.values());
-        public List<StatutDemandeEnum> statutDemande = Arrays.asList(StatutDemandeEnum.values());
-        public List<StatutIncidentEnum> statutIncident = Arrays.asList(StatutIncidentEnum.values());
-        public List<StatutLogementEnum> statutLogement = Arrays.asList(StatutLogementEnum.values());
-        public List<StatutMaintenanceEnum> statutMaintenance = Arrays.asList(StatutMaintenanceEnum.values());
-        public List<StatutPaiementEnum> statutPaiement = Arrays.asList(StatutPaiementEnum.values());
-        public List<TypeDocumentEnum> typeDocument = Arrays.asList(TypeDocumentEnum.values());
-        public List<TypeIncidentEnum> typeIncident = Arrays.asList(TypeIncidentEnum.values());
-        public List<TypeLogementEnum> typeLogement = Arrays.asList(TypeLogementEnum.values());
-        public List<TypeMaintenanceEnum> typeMaintenance = Arrays.asList(TypeMaintenanceEnum.values());
-        public List<TypeNotificationEnum> typeNotification = Arrays.asList(TypeNotificationEnum.values());
-        public List<TypeRapportEnum> typeRapport = Arrays.asList(TypeRapportEnum.values());
-        public List<UrgenceEnum> urgence = Arrays.asList(UrgenceEnum.values());
     }
 }
