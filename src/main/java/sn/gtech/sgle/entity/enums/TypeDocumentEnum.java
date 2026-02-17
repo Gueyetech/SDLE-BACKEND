@@ -1,8 +1,11 @@
 package sn.gtech.sgle.entity.enums;
 
 public enum TypeDocumentEnum {
+    CARTE_ETUDIANT,
     PIECE_IDENTITE,
     CERTIFICAT_SCOLARITE,
+    ATTESTATION_BOURSE,
+    PHOTO_IDENTITE,
     CONTRAT_LOCATION,
     RECU_PAIEMENT,
     PHOTO_LOGEMENT,
