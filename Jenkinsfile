@@ -28,11 +28,6 @@ pipeline {
                 echo '🧪 Exécution des tests unitaires...'
                 sh 'mvn test -B'
             }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-                }
-            }
         }
 
         stage('Security Scan - Code Source') {
