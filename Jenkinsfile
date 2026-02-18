@@ -8,10 +8,6 @@ pipeline {
         DOCKER_IMAGE = "${DOCKER_HUB_USER}/${IMAGE_NAME}"
     }
 
-    tools {
-        maven 'Maven-3.9'
-    }
-
     stages {
         stage('Checkout') {
             steps {
